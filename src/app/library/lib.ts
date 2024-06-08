@@ -21,6 +21,22 @@ export enum FaceValue{
     Ace
 }
 
+export enum Destination{
+    P1hand,
+    P2hand,
+    P1DrawPile,
+    P2DrawPile,
+    CenterPile1,
+    CenterPile2,
+    centerDrawPile1,
+    centerDrawPile2
+}
+
+export enum Player{
+    Player1,
+    Player2
+}
+
 export type Card = number;
 export const SUIT_BIN_WIDTH = 2; // two bits used to store information about the suite of a card because there are only 4 suites so 00, 01, 10, 11
 
@@ -92,5 +108,5 @@ function shuffle(deck: Deck): void {
       [deck[currentIndex], deck[randomIndex]] = [
         deck[randomIndex], deck[currentIndex]];
     }
-  }
+}
   
