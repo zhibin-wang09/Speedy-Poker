@@ -17,7 +17,7 @@ export default function Card({card, isFlipped, useCard, player}: CardProp){
     
     return (
         <div id={player == null ? "" : `player${player}-card${card}`}>
-            <motion.img
+            {card == -1 ? <></> : <motion.img
                 initial={{x:0, y:0, opacity:0, scale:0.5}}
                 animate={{ opacity: 1, scale: 1}}
                 onClick={() => {
@@ -26,7 +26,7 @@ export default function Card({card, isFlipped, useCard, player}: CardProp){
                 src={src}
                 layoutId={card?.toString()}
                 className='size-40 inline'
-            />
+            />}
         </div>
     )
 }
