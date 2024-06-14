@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState} from 'react';
 import {Card as TCard, getSuit, getFaceValue, FaceValue, Suit, Destination, Player} from '../library/lib';
 import {motion} from 'framer-motion';
 
@@ -15,16 +16,18 @@ export default function Card({card, isFlipped, useCard, player}: CardProp){
     const src = isFace ? createCardSVGPath(card!) : CARD_BACK_SVG_PATH;
     
     return (
+        <div id={player == null ? "" : `player${player}-card${card}`}>
             <motion.img
-                initial={{ opacity: 0, scale: 0.5}}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{x:0, y:0, opacity:0, scale:0.5}}
+                animate={{ opacity: 1, scale: 1}}
                 onClick={() => {
                     if(player != null && useCard) useCard(card, player)
                 }}
                 src={src}
+                layoutId={card?.toString()}
                 className='size-40 inline'
-                id={player == null ? "" : `player${player}-card${card}`}
             />
+        </div>
     )
 }
 
