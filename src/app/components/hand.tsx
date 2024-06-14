@@ -20,7 +20,7 @@ export default function Hand({ cards, useCard, player }: HandProp) {
       margin="30px"
     >
       {cards.map((c) => {
-        return (
+        if (c != -1) return (
           <Card
             key={c}
             card={c}
