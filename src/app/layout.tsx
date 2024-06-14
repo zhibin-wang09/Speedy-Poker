@@ -7,7 +7,8 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Speed Poker",
-  description: "Use all of your cards while following specific rules in a fast yet precise manner. Let the fun begin!",
+  description:
+    "Use all of your cards while following specific rules in a fast yet precise manner. Let the fun begin!",
 };
 
 export default function RootLayout({
@@ -18,9 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

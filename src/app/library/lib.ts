@@ -118,10 +118,7 @@ export type pileAndHand = {
   hand: Cards;
 };
 
-export function dealCardToPlayer(
-  deck: Deck,
-  hand: Cards,
-): pileAndHand {
+export function dealCardToPlayer(deck: Deck, hand: Cards): pileAndHand {
   let res: pileAndHand = { pile: [], hand: [] };
   let card: Card = deck[0];
   res.hand = [card, ...hand];

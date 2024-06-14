@@ -1,36 +1,47 @@
-"use client"
+"use client";
 
-import { useEffect, useState} from 'react';
-import {Card as TCard, getSuit, getFaceValue, FaceValue, Suit, Destination, Player} from '../library/lib';
-import {motion} from 'framer-motion';
+import { useEffect, useState } from "react";
+import {
+  Card as TCard,
+  getSuit,
+  getFaceValue,
+  FaceValue,
+  Suit,
+  Destination,
+  Player,
+} from "../library/lib";
+import { motion } from "framer-motion";
 
-interface CardProp{
-    card: TCard,
-    isFlipped: boolean,
-    useCard?: (c : TCard, p: Player) => void,
-    player?: Player,
+interface CardProp {
+  card: TCard;
+  isFlipped: boolean;
+  useCard?: (c: TCard, p: Player) => void;
+  player?: Player;
 }
 
-export default function Card({card, isFlipped, useCard, player}: CardProp){
-    const isFace = !isFlipped && card !== undefined;
-    const src = isFace ? createCardSVGPath(card!) : CARD_BACK_SVG_PATH;
-    
-    return (
-        <div id={player == null ? "" : `player${player}-card${card}`}>
-            {card == -1 ? <></> : <motion.img
-                initial={{x:0, y:0, opacity:0, scale:0.5}}
-                animate={{ opacity: 1, scale: 1}}
-                onClick={() => {
-                    if(player != null && useCard) useCard(card, player)
-                }}
-                src={src}
-                layoutId={card?.toString()}
-                className='size-40 inline'
-            />}
-        </div>
-    )
-}
+export default function Card({ card, isFlipped, useCard, player }: CardProp) {
+  const isFace = !isFlipped && card !== undefined;
+  const src = isFace ? createCardSVGPath(card!) : CARD_BACK_SVG_PATH;
 
+  return (
+    <div id={player == null ? "" : `player${player}-card${card}`}>
+      {card == -1 ? (
+        <></>
+      ) : (
+        <motion.img
+          initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          onClick={() => {
+            if (player != null && useCard) useCard(card, player);
+          }}
+          src={src}
+          layoutId={card?.toString()}
+          className="size-40 inline"
+        />
+      )}
+    </div>
+  );
+}
 
 const CARDS_PREFIX_PATH = "/cards/";
 const CARD_BACK_SVG_PATH = `${CARDS_PREFIX_PATH}BACK.svg`;
