@@ -18,6 +18,11 @@ export default function Home() {
   const [centerDrawPile1, setcenterDrawPile1] = useState<TPile>([]);
   const [centerDrawPile2, setcenterDrawPile2] = useState<TPile>([]);
 
+  /**
+   * When the player placed a card we need to remove the card from their hand and place into the corresponding center pile
+   * @param card the card that was used
+   * @param player the player that used the card
+   */
   function useCard(card : Card, player : Player){
     if(player == Player.Player1){
       let index : number = P1hand.indexOf(card);
@@ -29,6 +34,23 @@ export default function Home() {
       let targetCard : Card = P2hand[index];
       setP2hand(P2hand.filter(c => c != targetCard));
       setcenterPile1([targetCard, ...centerDrawPile1])
+    }
+  }
+
+  /**
+   * When the player plays a card we need to refill their hand from their corresponding draw pile
+   * 
+   * @param player the player that the function needs to refill
+   */
+  function dealCardToPlayer(player: Player){
+    if(player == Player.Player1){
+      let card : Card = P1DrawPile[0];
+      setP1hand([card, ...P1hand]);
+      setP1DrawPile(P1DrawPile.filter(c => c != card));
+    }else{
+      let card : Card = P2DrawPile[0];
+      setP2hand([card, ...P2hand]);
+      setP1DrawPile(P2DrawPile.filter(c => c != card));
     }
   }
 
@@ -52,7 +74,7 @@ export default function Home() {
           <Hand cards={P1hand} useCard={useCard} player = {Player.Player1}></Hand>
           <Pile Cards = {P1DrawPile} isFlipped={true}/>
         </Box>
-        <Box display="flex" alignItems="center" justifyContent="space-between" margin="30px" id="center">
+        <Box display="flex" alignItems="center" justifyContent="space-between" margin="30px">
           <Pile Cards = {centerDrawPile1} isFlipped={true}/>
           <Pile Cards = {centerPile1} isFlipped={false}/>
           <Pile Cards = {centerPile2} isFlipped={false}/>
