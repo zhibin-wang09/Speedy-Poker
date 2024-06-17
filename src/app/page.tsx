@@ -34,6 +34,7 @@ export default function Home() {
     drawPile: [],
     playerId: PlayerId.Default,
   });
+  const [isDead, setIsDead] = useState<boolean>(false); // this state tracks if there are any valid moves possible by two players
 
   /**
    * When the player placed a card we need to remove the card from their hand and place into the corresponding center pile
@@ -86,6 +87,30 @@ export default function Home() {
       setcenterPile2([targetCard, ...centerDrawPile2]);
     }
   }
+
+  useEffect(() => {
+    let canMove: boolean = false;
+    player1.hand.forEach((c) => {
+      if(validateMove(centerPile1[0],centerPile2[0],c) != Validality.INVALID) canMove = true;
+    })
+    player2.hand.forEach((c) => {
+      if(validateMove(centerPile1[0],centerPile2[0],c) != Validality.INVALID) canMove = true;
+    })
+    if(!canMove) setIsDead(true);
+    else setIsDead(false);
+    console.log(canMove);
+  },[centerPile1,centerPile2])
+
+  useEffect(() => {
+    if(isDead){
+      let centerDrawPile1TopCard : Card = centerDrawPile1[0];
+      let centerDrawPile2TopCard : Card = centerDrawPile2[0];
+      setcenterPile1([centerDrawPile1TopCard,...centerPile1]);
+      setcenterPile2([centerDrawPile2TopCard,...centerPile2]);
+      setcenterDrawPile1(centerDrawPile1.slice(1));
+      setcenterDrawPile2(centerDrawPile2.slice(1));
+    }
+  },[isDead])
 
   useEffect(() => {
     let temp_deck: Deck = createDeck();
