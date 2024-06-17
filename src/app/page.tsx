@@ -11,9 +11,9 @@ import {
   Card,
   Destination,
   Player,
-  dealCardToPlayer,
-  pileAndHand,
   CARD_HOLDER,
+  validateMove,
+  Validality,
 } from "./library/lib";
 import { Box } from "@chakra-ui/react";
 
@@ -37,20 +37,36 @@ export default function Home() {
     if (player == Player.Player1) {
       let index: number = P1hand.indexOf(card);
       let targetCard: Card = P1hand[index];
+      let destination: boolean = false;
+      let result: Validality = validateMove(centerPile1[0],centerPile2[0], targetCard);
+      if(result == Validality.CENTER1VALID){
+        destination = true;
+      }else if(result == Validality.INVALID){
+        return;
+      }
       let newCard: Card = P1DrawPile.length > 0 ? P1DrawPile[0] : CARD_HOLDER;
       let copy = [...P1hand];
       copy[index] = newCard;
       setP1hand(copy);
-      setcenterPile1([targetCard, ...centerDrawPile1]);
+      if(destination) setcenterPile1([targetCard, ...centerDrawPile1]);
+      else setcenterPile2([targetCard, ...centerDrawPile2])
       if (P1DrawPile.length > 0) setP1DrawPile(P1DrawPile.slice(1));
     } else {
       let index: number = P2hand.indexOf(card);
       let targetCard: Card = P2hand[index];
+      let destination: boolean = false;
+      let result: Validality = validateMove(centerPile1[0],centerPile2[0], targetCard);
+      if(result == Validality.CENTER1VALID){
+        destination = true;
+      }else if(result == Validality.INVALID){
+        return;
+      }
       let newCard: Card = P2DrawPile.length > 0 ? P2DrawPile[0] : CARD_HOLDER;
       let copy = [...P2hand];
       copy[index] = newCard;
       setP2hand(copy);
-      setcenterPile1([targetCard, ...centerDrawPile1]);
+      if(destination) setcenterPile1([targetCard, ...centerDrawPile1]);
+      else setcenterPile2([targetCard,...centerDrawPile2]);
       if (P2DrawPile.length > 0) setP2DrawPile(P2DrawPile.slice(1));
     }
   }

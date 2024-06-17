@@ -125,3 +125,19 @@ export function dealCardToPlayer(deck: Deck, hand: Cards): pileAndHand {
   res.pile = deck.filter((c) => c != card);
   return res;
 }
+
+export enum Validality{
+    CENTER1VALID,
+    CENTER2VALID,
+    INVALID
+}
+
+export function validateMove(centerPile1TopCard : Card, centerPile2TopCard: Card, card: Card) : Validality{
+    if(Math.abs(getFaceValue(centerPile1TopCard) - getFaceValue(card)) ==  1){
+        return Validality.CENTER1VALID;
+    }else if(Math.abs(getFaceValue(centerPile2TopCard) - getFaceValue(card)) ==  1){
+        return Validality.CENTER2VALID;
+    }else{
+        return Validality.INVALID;
+    }
+}
