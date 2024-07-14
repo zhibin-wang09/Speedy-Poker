@@ -23,8 +23,9 @@ export default function Card({ card, isFlipped, useCard, player }: CardProp) {
   const src = isFace ? createCardSVGPath(card!) : CARD_BACK_SVG_PATH;
 
   return (
-    <div id={player == null ? "" : `player${player}-card${card}`}>
+    <div data-testid = {`card-${card}-div`} id={player == null ? "" : `player${player}-card${card}`}>
         <motion.img
+        data-testid={`card-${card}`}
           initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
           animate={{ opacity: 1, scale: 1 }}
           onClick={() => {
