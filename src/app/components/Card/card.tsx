@@ -32,7 +32,7 @@ export default function Card({ card, isFlipped, useCard, player }: CardProp) {
             if (player != null && useCard) useCard(card, player);
           }}
           src={src}
-          layoutId={card?.toString()}
+          layoutId={card?.toString()} // Framer motion use layoutId to animate the image transition whne Card is removed from one component to another component
           className="size-40 inline"
         />
     </div>
