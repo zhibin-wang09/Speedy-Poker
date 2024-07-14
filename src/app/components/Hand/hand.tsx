@@ -1,8 +1,8 @@
 "use client";
 
-import Card from "./card";
-import { Pile } from "../library/lib";
-import { Card as TCard, Destination, Player } from "../library/lib";
+import Card from "../Card/card";
+import { Pile } from "../../library/lib";
+import { Card as TCard, Destination, Player } from "../../library/lib";
 import { Box } from "@chakra-ui/react";
 
 interface HandProp {
@@ -12,6 +12,7 @@ interface HandProp {
 }
 
 export default function Hand({ cards, useCard, player }: HandProp) {
+
   return (
     <Box
       display="flex"

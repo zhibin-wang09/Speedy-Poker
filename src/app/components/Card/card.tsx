@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import {
   Card as TCard,
   getSuit,
@@ -9,7 +8,7 @@ import {
   Suit,
   Destination,
   Player,
-} from "../library/lib";
+} from "../../library/lib";
 import { motion } from "framer-motion";
 
 interface CardProp {

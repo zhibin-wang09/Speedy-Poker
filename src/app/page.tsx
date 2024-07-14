@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Hand from "./components/hand";
-import Pile from "./components/pile";
+import Hand from "./components/Hand/hand";
+import Pile from "./components/Pile/pile";
 import {
   Deck,
   createDeck,
@@ -105,6 +105,11 @@ export default function Home() {
     if(isDead){
       let centerDrawPile1TopCard : Card = centerDrawPile1[0];
       let centerDrawPile2TopCard : Card = centerDrawPile2[0];
+      // in case it's dead and there are no cards to refill from we will take from the center piles and redistribute the cards to the side
+      if(centerDrawPile1.length == 0 || centerDrawPile2.length == 0){
+        setcenterDrawPile1([...centerPile1.slice(0,4),...centerDrawPile1])
+        setcenterDrawPile2([...centerPile2.slice(0,4),...centerDrawPile2])
+      }
       setcenterPile1([centerDrawPile1TopCard,...centerPile1]);
       setcenterPile2([centerDrawPile2TopCard,...centerPile2]);
       setcenterDrawPile1(centerDrawPile1.slice(1));
