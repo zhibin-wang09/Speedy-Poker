@@ -17,6 +17,9 @@ import {
   PlayerId,
 } from "./library/lib";
 import { Box } from "@chakra-ui/react";
+import dotenv from 'dotenv';
+dotenv.config();
+import openSocket from "./connection/socket";
 
 export default function Home() {
   const [deck, setDeck] = useState<Deck>([]);
@@ -36,6 +39,11 @@ export default function Home() {
   });
   const [isDead, setIsDead] = useState<boolean>(false); // this state tracks if there are any valid moves possible by two players
 
+  // connection to the socket
+  useEffect(() =>{
+    openSocket(process.env.HOST_NAME, process.env.PORT);
+  },[]);
+  
   /**
    * When the player placed a card we need to remove the card from their hand and place into the corresponding center pile
    * @param card the card that was used
@@ -97,8 +105,7 @@ export default function Home() {
       if(validateMove(centerPile1[0],centerPile2[0],c) != Validality.INVALID) canMove = true;
     })
     if(!canMove) setIsDead(true);
-    else setIsDead(false);
-    console.log(canMove);
+    else setIsDead(false);    
   },[centerPile1,centerPile2])
 
   useEffect(() => {
