@@ -1,7 +1,7 @@
 // the list of events taht goes from server to client
 
-import { Card, Player } from "@/app/library/lib";
-import { Game } from "../../shared/types/types";
+import { Card,Player } from "./types";
+import { Game } from "./types";
 
 // should be used to emit events to the client side
 export interface ServerToClient {

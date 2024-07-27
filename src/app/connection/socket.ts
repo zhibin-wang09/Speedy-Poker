@@ -1,4 +1,5 @@
-import io from 'socket.io-client';
-const socket = io(`http://${"localhost"}:${8080}`);
+import {io,Socket} from 'socket.io-client';
+import { ClientToServer, ServerToClient } from '../../../shared/types/events';
+const socket : Socket<ServerToClient, ClientToServer> = io(`http://${"localhost"}:${8080}`);
 
 export default socket;

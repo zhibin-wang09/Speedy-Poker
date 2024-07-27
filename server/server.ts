@@ -3,7 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { Card, Game, Player } from "../shared/types/types";
 import { initializeGameState, useCard } from "./apis/socketApi";
-import { ClientToServer, SocketData, ServerToClient } from "./types/events";
+import { ClientToServer, SocketData, ServerToClient } from "../shared/types/events";
 
 const app = express();
 const httpServer = createServer(app);
