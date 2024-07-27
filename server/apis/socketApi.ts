@@ -8,25 +8,12 @@ import {
   PlayerId,
   Validality,
 } from "../../shared/types/types";
-import { createDeck, dealCards, shuffleUntilNotDead, validateMove } from "./cardApi";
+import { initializeGameUntilNotDead, shuffleUntilNotDead, validateMove } from "./cardApi";
 
 export function initializeGameState(): Game {
-  let player1: Player;
-  let player2: Player;
-  let game: Game;
+  
+  let game = initializeGameUntilNotDead();
 
-  let deck: Deck = createDeck();
-  player1 = new Player(dealCards(deck, 4), dealCards(deck, 16), 1);
-  player2 = new Player(dealCards(deck, 4), dealCards(deck, 16), 2);
-  game = new Game(
-    player1,
-    player2,
-    dealCards(deck, 1),
-    dealCards(deck, 1),
-    dealCards(deck, 5),
-    dealCards(deck, 5)
-  );
-  game = shuffleUntilNotDead(game);
   return game;
 }
 

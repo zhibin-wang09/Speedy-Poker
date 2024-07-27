@@ -133,6 +133,11 @@ export function checkIsDead(game: Game, player1: Player, player2: Player) {
   return !canMove;
 }
 
+/**
+ * Used during a ongoing game to reset the center piles when ever a dead state occurs
+ * @param game The ongoing game
+ * @returns A game with center piles reshuffuled
+ */
 export function shuffleUntilNotDead(game: Game): Game {
   let isDead: boolean = checkIsDead(game, game.player1, game.player2);
   while (isDead) {
@@ -156,5 +161,36 @@ export function shuffleUntilNotDead(game: Game): Game {
     game.centerDrawPile1 = game.centerDrawPile1.slice(1);
     game.centerDrawPile2 = game.centerDrawPile2.slice(1);
   }
+  return game;
+}
+
+/**
+ * Initailize a game that is not dead. Used only when the game is initailized
+ * @returns a game that does not have a dead state
+ */
+export function initializeGameUntilNotDead(): Game{
+  let game = createGame();
+  if(checkIsDead(game,game.player1,game.player2)){
+    game = createGame();
+  }
+  return game;
+}
+
+function createGame(): Game{
+  let player1: Player;
+  let player2: Player;
+  let game: Game;
+
+  let deck: Deck = createDeck();
+  player1 = new Player(dealCards(deck, 4), dealCards(deck, 16), 1);
+  player2 = new Player(dealCards(deck, 4), dealCards(deck, 16), 2);
+  game = new Game(
+    player1,
+    player2,
+    dealCards(deck, 1),
+    dealCards(deck, 1),
+    dealCards(deck, 5),
+    dealCards(deck, 5)
+  );
   return game;
 }
