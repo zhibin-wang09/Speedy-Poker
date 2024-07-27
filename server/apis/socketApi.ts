@@ -8,7 +8,7 @@ import {
   PlayerId,
   Validality,
 } from "../../shared/types/types";
-import { checkIsDead, createDeck, dealCards, validateMove } from "./cardApi";
+import { createDeck, dealCards, shuffleUntilNotDead, validateMove } from "./cardApi";
 
 export function initializeGameState(): Game {
   let player1: Player;
@@ -26,6 +26,7 @@ export function initializeGameState(): Game {
     dealCards(deck, 5),
     dealCards(deck, 5)
   );
+  game = shuffleUntilNotDead(game);
   return game;
 }
 
@@ -43,6 +44,7 @@ export function useCard(
       game.centerPile2[0],
       targetCard
     );
+    console.log(result)
     if (result == Validality.CENTER1VALID) {
       destination = Destination.CenterPile1;
     } else if (result == Validality.INVALID) {
@@ -68,32 +70,7 @@ export function useCard(
       game.centerPile2 = [targetCard, ...game.centerPile2];
     }
 
-    const canMove: boolean = checkIsDead(game, game.player1, game.player2);
-    if (canMove) {
-      return game;
-    } else {
-      console.log("Cant Move");
-      let centerDrawPile1TopCard: Card = game.centerDrawPile1[0];
-      let centerDrawPile2TopCard: Card = game.centerDrawPile2[0];
-      // in case it's dead and there are no cards to refill from we will take from the center piles and redistribute the cards to the side
-      if (
-        game.centerDrawPile1.length == 0 ||
-        game.centerDrawPile2.length == 0
-      ) {
-        game.centerDrawPile1 = [
-          ...game.centerPile1.slice(0, 4),
-          ...game.centerDrawPile1,
-        ];
-        game.centerDrawPile2 = [
-          ...game.centerPile2.slice(0, 4),
-          ...game.centerDrawPile2,
-        ];
-      }
-      game.centerPile1 = [centerDrawPile1TopCard, ...game.centerPile1];
-      game.centerPile2 = [centerDrawPile2TopCard, ...game.centerPile2];
-      game.centerDrawPile1 = game.centerDrawPile1.slice(1);
-      game.centerDrawPile2 = game.centerDrawPile2.slice(1);
-    }
+    game = shuffleUntilNotDead(game);
     return game;
   }
 }
