@@ -1,10 +1,4 @@
 import io from 'socket.io-client';
+const socket = io(`http://${"localhost"}:${8080}`);
 
-function openSocket(hostname: string | undefined, port: string | undefined){
-    const socket = io(`http://${hostname}:${port}`, {
-        autoConnect: false
-    });
-    return socket;
-}
-
-export default openSocket;
+export default socket;
