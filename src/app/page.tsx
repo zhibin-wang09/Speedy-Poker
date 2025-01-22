@@ -70,7 +70,7 @@ export default function Home() {
                     {...register("playerName", {
                       required: "Name is required",
                     })}
-                    placeholder="Ex. Raisa"
+                    placeholder="Ex. Raisin"
                     size="md"
                   ></Input>
                 </Field>

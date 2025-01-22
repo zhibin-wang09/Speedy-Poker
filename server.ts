@@ -5,6 +5,7 @@ import { initializeGameState, useCard } from "./Utils/socketApi";
 import { Card, Game, Player } from "@/types/types";
 
 const dev = process.env.NODE_ENV !== "production";
+console.log( process.env.NODE_ENV);
 const hostname = "localhost";
 const port = 3000;
 // when using middleware `hostname` and `port` must be provided below
