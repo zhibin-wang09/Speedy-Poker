@@ -57,7 +57,7 @@ export default function Page() {
     return () => {
       socket.off("sendGameState");
     };
-  }, [roomID]);
+  }, [router, toaster, roomID]);
 
   useEffect(() => {
     setRoomID(param.roomID);

@@ -20,7 +20,7 @@ export default function Home() {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<joinGameInput>();
   const watchPlayerName = watch("playerName");
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function Home() {
     return () => {
       socket.off("sendRoomID");
     };
-  }, [watchPlayerName]);
+  }, [router, watchPlayerName]);
 
   const createGame: SubmitHandler<joinGameInput> = (data: joinGameInput) => {
     socket.emit("joinGameRoom", data.roomID);
