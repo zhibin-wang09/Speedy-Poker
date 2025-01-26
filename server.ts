@@ -5,7 +5,7 @@ import { initializeGameState, useCard } from "./Utils/socketApi";
 import { Card, Game, Player } from "@/types/types";
 
 const dev = process.env.NODE_ENV !== "production";
-console.log( process.env.NODE_ENV);
+console.log(process.env.NODE_ENV);
 const hostname = "localhost";
 const port = 3000;
 // when using middleware `hostname` and `port` must be provided below
@@ -13,7 +13,7 @@ const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
 
 const games = new Map<number, Game>();
-const socketToGame = new Map<string,number>();
+const socketToGame = new Map<string, Game>();
 
 app.prepare().then(() => {
   const httpServer = createServer(handler);
@@ -30,12 +30,9 @@ app.prepare().then(() => {
     socket.on("getGameState", (gameID: number) => {
       // if the game was already created, join that game instead
       let existingGame = games.get(gameID);
-      if (existingGame) {
-        socket.emit("sendGameState", existingGame);
-        return;
-      }
+      socket.emit("receiveGameState", existingGame);
     });
-  
+
     socket.on("playCard", (card: Card, gameID: number, player: Player) => {
       let game = games.get(gameID);
       if (!game) {
@@ -44,68 +41,65 @@ app.prepare().then(() => {
       }
       game = useCard(card, player, game);
       if (!game) return;
-      if(player.hand.length == 0){
-        io.to(player.name).emit("result", "You Won the Game!");
-        let theOtherPlayer: Player = game.player1 == player ? game.player2 : game.player1;
-        io.to(theOtherPlayer.name).emit("result", "You Lose the Game!");
+      if (player.hand.length == 0) {
+        io.to(player.socketID).emit("result", "You Won the Game!");
+        let theOtherPlayer: Player =
+          game.player1 == player ? game.player2 : game.player1;
+        io.to(theOtherPlayer.socketID).emit("result", "You Lose the Game!");
       }
-      io.sockets.in("" + gameID).emit("sendGameState", game);
+
+      io.sockets.in(String(gameID)).emit("receiveGameState", game);
     });
-  
+
     socket.on("joinGameRoom", (roomID: number) => {
-      const newRoomID = Math.floor(Date.now() * Math.random());
-      const roomIDString = roomID ? "" + roomID : "" + newRoomID;
-      console.log("test test")
-  
+      const newRoomID: number = Math.floor(Date.now() * Math.random());
+      const roomIDString: string = roomID ? String(roomID) : String(newRoomID);
+
       // make sure players are restricted at 2
-      if(io.sockets.adapter.rooms.get(roomIDString)?.size === 2){
+      if (io.sockets.adapter.rooms.get(roomIDString)?.size === 2) {
         return;
       }
-  
+
       socket.join(roomIDString);
-      console.log("joined");
-      socket.emit("sendRoomID", roomID ? roomID : newRoomID);
+      socket.emit("receiveRoomID", roomIDString);
     });
-  
+
     socket.on("onPlayerReady", (gameID: number) => {
-      const room = io.sockets.adapter.rooms.get("" + gameID);
-      let game = games.get(Number(gameID));
-      socketToGame.set(socket.id, gameID);
-  
+      let game = games.get(gameID);
+
       // create game if it does not already exist
-      if(!game){
-        game = initializeGameState();
+      if (!game) {
+        game = initializeGameState(gameID);
       }
-  
+
+      socketToGame.set(socket.id, game);
+
       // set up the player name by id so we can identify player using socket id
-      if(!game.player1.name){
-        game.player1.name = socket.id;
-      }else if(!game.player2.name){
-        game.player2.name = socket.id;
-      }
-  
-  
+      game.playerJoin(socket.id);     
       // wait for 2 players to start game
-      if(room?.size == 2){
+      const room = io.sockets.adapter.rooms.get(String(gameID));
+      if (room?.size == 2) {
         console.log("start");
-        games.set(Number(gameID), game);
-        io.sockets.in("" + gameID).emit("startGameSession");
+        games.set(gameID, game);
+        io.sockets.in(String(gameID)).emit("startGameSession");
       }
-    })
-  
+    });
+
     socket.on("disconnect", () => {
       console.log(`user ${socket.id} left`);
-      const gameID = socketToGame.get(socket.id);
-      const userWhoLeft = socket.id;
-      let userStillInGame = '';
-      let game = games.get(gameID!);
-      userStillInGame = game?.player1.name == userWhoLeft ? game?.player2.name! :  game?.player2.name!;
-      console.log("on disconnect", gameID, userWhoLeft, userStillInGame);
-      socketToGame.delete(userStillInGame);
-      socketToGame.delete(userWhoLeft);
-      games.delete(gameID!);
-      io.in("" + gameID).socketsLeave("" + gameID);
-      io.to(userStillInGame).emit("endGame", "An user have left");
+
+      const game = socketToGame.get(socket.id);
+      if(!game){
+        return;
+      }
+      console.log(game.player1, game.player2)
+      socketToGame.delete(game.player1.socketID!);
+      socketToGame.delete(game.player2.socketID!);
+      games.delete(game.gameID);
+      io.in(String(game.gameID)).socketsLeave(String(game.gameID));
+      io.to(game.player1.socketID!).emit("endGame", "An user have left");
+      io.to(game.player2.socketID!).emit("endGame", "An user have left");
+      console.log(game.player1.socketID, game.player2.socketID);
     });
   });
 

@@ -48,28 +48,25 @@ export type Pile = Cards;
 export class Player {
   hand: Cards = [];
   drawPile: Pile = [];
-  playerId: PlayerId = PlayerId.Default;
+  playerID: PlayerId = PlayerId.Default;
+  socketID: string;
   name: string;
-  isReady: boolean;
 
-  constructor(hand: Cards, drawPile: Pile, playerId: PlayerId) {
+  constructor(hand: Cards, drawPile: Pile, playerID: PlayerId) {
     this.hand = hand;
     this.drawPile = drawPile;
-    this.playerId = playerId;
+    this.playerID = playerID;
     this.name = "";
-    this.isReady = false;
+    this.socketID = "";
   }
 
   setName(name: string) {
     this.name = name;
   }
-
-  setIsReady(isReady: boolean) {
-    this.isReady = isReady;
-  }
 }
 
 export class Game {
+  gameID: number;
   player1: Player = new Player([], [], 1);
   player2: Player = new Player([], [], 2);
   centerPile1: Pile = [];
@@ -83,7 +80,8 @@ export class Game {
     centerPile1: Pile,
     centerPile2: Pile,
     centerDrawPile1: Pile,
-    centerDrawPile2: Pile
+    centerDrawPile2: Pile,
+    gameID: number
   ) {
     this.player1 = player1;
     this.player2 = player2;
@@ -91,6 +89,17 @@ export class Game {
     this.centerPile2 = centerPile2;
     this.centerDrawPile1 = centerDrawPile1;
     this.centerDrawPile2 = centerDrawPile2;
+    this.gameID = gameID;
+  }
+
+  playerJoin(socketID: string){
+    if(!this.player1.socketID){
+      this.player1.socketID = socketID;
+      console.log("set player1 id");
+    }else if(!this.player2.socketID){
+      this.player2.socketID = socketID;
+      console.log("set player2 id")
+    }
   }
 }
 

@@ -25,12 +25,12 @@ export default function Home() {
   const watchPlayerName = watch("playerName");
   const router = useRouter();
   useEffect(() => {
-    socket.on("sendRoomID", (roomID) => {
+    socket.on("receiveRoomID", (roomID) => {
       router.push(`/waiting/${roomID}`);
     });
 
     return () => {
-      socket.off("sendRoomID");
+      socket.off("receiveRoomID");
     };
   }, [router, watchPlayerName]);
 

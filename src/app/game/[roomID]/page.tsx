@@ -1,9 +1,10 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import Hand from "@/components/game/hand";
 import Pile from "@/components/game/pile";
 import { Pile as TPile, Card, Player, PlayerId, Game } from "@/types/types";
-import { Box, createToaster } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import { Toaster, toaster } from "@/components/ui/toaster";
 import { socket } from "@/socket";
 import { useParams, useRouter } from "next/navigation";
 
@@ -21,43 +22,44 @@ export default function Page() {
   const [roomID, setRoomID] = useState<string | undefined>();
   const param = useParams<{ roomID: string }>();
   const router = useRouter();
-  const toaster = createToaster({
-    placement: "bottom"
-  })
 
   useEffect(() => {
     socket.emit("getGameState", parseInt(roomID!));
 
-    socket.on("sendGameState", (response) => {
+    socket.on("receiveGameState", (response) => {
       const game: Game = response;
-      if (game.player1.name === socket.id) {
-        setPlayer1(game.player1);
-        setPlayer2(game.player2);
-      } else {
-        setPlayer1(game.player2);
-        setPlayer2(game.player1);
+      if (game) {
+        if (game.player1.socketID === socket.id) {
+          setPlayer1(game.player1);
+          setPlayer2(game.player2);
+        } else {
+          setPlayer1(game.player2);
+          setPlayer2(game.player1);
+        }
+        setcenterDrawPile1(game.centerDrawPile1);
+        setcenterDrawPile2(game.centerDrawPile2);
+        setcenterPile1(game.centerPile1);
+        setcenterPile2(game.centerPile2);
       }
-      setcenterDrawPile1(game.centerDrawPile1);
-      setcenterDrawPile2(game.centerDrawPile2);
-      setcenterPile1(game.centerPile1);
-      setcenterPile2(game.centerPile2);
     });
 
-    socket.on("result", (response)=> {
+    socket.on("result", (response) => {
       toaster.create({
         description: response,
         duration: 6000,
-      })
-    })
+      });
+    });
 
     socket.on("endGame", () => {
       router.push("/");
     });
 
     return () => {
-      socket.off("sendGameState");
+      socket.off("receiveGameState");
+      socket.off("result");
+      socket.off("endGame");
     };
-  }, [router, toaster, roomID]);
+  }, [roomID]);
 
   useEffect(() => {
     setRoomID(param.roomID);
@@ -118,6 +120,7 @@ export default function Page() {
         ></Hand>
         <Pile Cards={player2.drawPile} isFlipped={true} />
       </Box>
+      <Toaster />
     </Box>
   );
 }

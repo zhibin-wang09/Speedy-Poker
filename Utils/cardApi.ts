@@ -168,15 +168,15 @@ import {
    * Initailize a game that is not dead. Used only when the game is initailized
    * @returns a game that does not have a dead state
    */
-  export function initializeGameUntilNotDead(): Game{
-    let game = createGame();
+  export function initializeGameUntilNotDead(gameID: number): Game{
+    let game = createGame(gameID);
     while(checkIsDead(game,game.player1,game.player2)){
-      game = createGame();
+      game = createGame(gameID);
     }
     return game;
   }
   
-  function createGame(): Game{
+  function createGame(gameID: number): Game{
     let player1: Player;
     let player2: Player;
     let game: Game;
@@ -190,7 +190,8 @@ import {
       dealCards(deck, 1),
       dealCards(deck, 1),
       dealCards(deck, 5),
-      dealCards(deck, 5)
+      dealCards(deck, 5),
+      gameID
     );
     return game;
   }

@@ -14,8 +14,8 @@ import {
     validateMove,
   } from "./cardApi";
   
-  export function initializeGameState(): Game {
-    let game = initializeGameUntilNotDead();
+  export function initializeGameState(gameID: number): Game {
+    let game = initializeGameUntilNotDead(gameID);
   
     return game;
   }
@@ -43,11 +43,11 @@ import {
         player.drawPile.length > 0 ? player.drawPile[0] : CARD_HOLDER;
       let copy = [...player.hand];
       copy[index] = newCard;
-      if (player.playerId == PlayerId.Player1) {
+      if (player.playerID == PlayerId.Player1) {
         game.player1.hand = copy;
         game.player1.drawPile =
           player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
-      } else if (player.playerId == PlayerId.Player2) {
+      } else if (player.playerID == PlayerId.Player2) {
         game.player2.hand = copy;
         game.player2.drawPile =
           player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
