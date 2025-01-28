@@ -1,7 +1,6 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-import { initializeGameState, useCard } from "./Utils/socketApi";
 import { Card, Game, Player } from "@/types/types";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -44,14 +43,16 @@ app.prepare().then(() => {
         console.log("ERROR!!!");
         return;
       }
-      game = useCard(card, player, game);
+      
+      game.useCard(card, player);
       if (!game) return;
-      console.log(game);
-      if (player.hand.length == 0) {
-        io.to(player.socketID).emit("result", "You Won the Game!");
-        let theOtherPlayer: Player =
-          game.player1 == player ? game.player2 : game.player1;
-        io.to(theOtherPlayer.socketID).emit("result", "You Lose the Game!");
+
+      if (game.player1.hand.length == 0) {
+        io.to(game.player1.socketID).emit("result", "You Won the Game!");
+        io.to(game.player2.socketID).emit("result", "You Lose the Game!");
+      }else if(game.player2.hand.length == 0){
+        io.to(game.player2.socketID).emit("result", "You Won the Game!");
+        io.to(game.player1.socketID).emit("result", "You Lose the Game!");
       }
 
       io.sockets.in(String(gameID)).emit("receiveGameState", game);
@@ -70,7 +71,7 @@ app.prepare().then(() => {
       let game = games.get(gameID);
 
       if (!game) {
-        game = initializeGameState(gameID);
+        game = new Game(gameID);
         games.set(gameID, game); // Save the game immediately after initialization
       }
 
