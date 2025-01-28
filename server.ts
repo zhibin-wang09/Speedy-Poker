@@ -14,6 +14,11 @@ const handler = app.getRequestHandler();
 
 const games = new Map<number, Game>();
 const socketToGame = new Map<string, Game>();
+interface joinGameInput {
+  roomID: number;
+  playerName: string;
+}
+
 
 app.prepare().then(() => {
   const httpServer = createServer(handler);
@@ -41,6 +46,7 @@ app.prepare().then(() => {
       }
       game = useCard(card, player, game);
       if (!game) return;
+      console.log(game);
       if (player.hand.length == 0) {
         io.to(player.socketID).emit("result", "You Won the Game!");
         let theOtherPlayer: Player =
@@ -51,9 +57,9 @@ app.prepare().then(() => {
       io.sockets.in(String(gameID)).emit("receiveGameState", game);
     });
 
-    socket.on("joinGameRoom", (roomID: number) => {
+    socket.on("joinGameRoom", (data: joinGameInput) => {
       const newRoomID: number = Math.floor(Date.now() * Math.random());
-      const roomIDString: string = roomID ? String(roomID) : String(newRoomID);
+      const roomIDString: string = data.roomID ? String(data.roomID) : String(newRoomID);
 
       // make sure players are restricted at 2
       if (io.sockets.adapter.rooms.get(roomIDString)?.size === 2) {
@@ -65,22 +71,26 @@ app.prepare().then(() => {
     });
 
     socket.on("onPlayerReady", (gameID: number) => {
+      // Retrieve the game state or initialize it if it doesn't exist
       let game = games.get(gameID);
 
-      // create game if it does not already exist
       if (!game) {
         game = initializeGameState(gameID);
+        games.set(gameID, game); // Save the game immediately after initialization
       }
 
+      // Ensure the game object is correctly associated with the socket
       socketToGame.set(socket.id, game);
 
-      // set up the player name by id so we can identify player using socket id
-      game.playerJoin(socket.id);     
-      // wait for 2 players to start game
+      // Set up the player socketID properly
+      game.playerJoin(socket.id);
+      
+      console.log(`Player1 ID: ${game.player1.socketID}`);
+      console.log(`Player2 ID: ${game.player2.socketID}`);
+      // Wait for 2 players to start the game
       const room = io.sockets.adapter.rooms.get(String(gameID));
-      if (room?.size == 2) {
-        console.log("start");
-        games.set(gameID, game);
+      if (room?.size === 2) {
+        console.log("Start");
         io.sockets.in(String(gameID)).emit("startGameSession");
       }
     });
@@ -89,10 +99,10 @@ app.prepare().then(() => {
       console.log(`user ${socket.id} left`);
 
       const game = socketToGame.get(socket.id);
-      if(!game){
+      if (!game) {
         return;
       }
-      console.log(game.player1, game.player2)
+      console.log(game.player1, game.player2);
       socketToGame.delete(game.player1.socketID!);
       socketToGame.delete(game.player2.socketID!);
       games.delete(game.gameID);

@@ -92,13 +92,11 @@ export class Game {
     this.gameID = gameID;
   }
 
-  playerJoin(socketID: string){
-    if(!this.player1.socketID){
+  playerJoin(socketID: string) {
+    if (!this.player1.socketID) {
       this.player1.socketID = socketID;
-      console.log("set player1 id");
-    }else if(!this.player2.socketID){
+    } else if (!this.player2.socketID && this.player1.socketID !== socketID) {
       this.player2.socketID = socketID;
-      console.log("set player2 id")
     }
   }
 }

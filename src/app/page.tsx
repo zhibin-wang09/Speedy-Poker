@@ -35,7 +35,7 @@ export default function Home() {
   }, [router, watchPlayerName]);
 
   const createGame: SubmitHandler<joinGameInput> = (data: joinGameInput) => {
-    socket.emit("joinGameRoom", data.roomID);
+    socket.emit("joinGameRoom", data);
   };
 
   return (
