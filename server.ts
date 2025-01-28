@@ -65,12 +65,7 @@ app.prepare().then(() => {
       if (io.sockets.adapter.rooms.get(roomIDString)?.size === 2) {
         return;
       }
-
-      socket.join(roomIDString);
-      socket.emit("receiveRoomID", roomIDString);
-    });
-
-    socket.on("onPlayerReady", (gameID: number) => {
+      let gameID = Number(roomIDString);
       // Retrieve the game state or initialize it if it doesn't exist
       let game = games.get(gameID);
 
@@ -83,10 +78,17 @@ app.prepare().then(() => {
       socketToGame.set(socket.id, game);
 
       // Set up the player socketID properly
-      game.playerJoin(socket.id);
+      game.playerJoin(data.playerName, socket.id);
       
       console.log(`Player1 ID: ${game.player1.socketID}`);
       console.log(`Player2 ID: ${game.player2.socketID}`);
+
+      socket.join(roomIDString);
+      socket.emit("receiveRoomID", roomIDString);
+    });
+
+    socket.on("onPlayerReady", (gameID: number) => {
+      
       // Wait for 2 players to start the game
       const room = io.sockets.adapter.rooms.get(String(gameID));
       if (room?.size === 2) {
@@ -100,6 +102,7 @@ app.prepare().then(() => {
 
       const game = socketToGame.get(socket.id);
       if (!game) {
+        console.log("Did not find existing game when user exited");
         return;
       }
       console.log(game.player1, game.player2);

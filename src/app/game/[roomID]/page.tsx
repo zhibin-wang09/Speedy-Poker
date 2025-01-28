@@ -50,7 +50,11 @@ export default function Page() {
       });
     });
 
-    socket.on("endGame", () => {
+    socket.on("endGame", (response: string) => {
+      toaster.create({
+        description: response,
+        duration: 6000,
+      })
       router.push("/");
     });
 
