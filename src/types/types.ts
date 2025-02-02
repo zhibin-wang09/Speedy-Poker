@@ -1,4 +1,9 @@
-import { createDeck, dealCards, getFaceValue } from "../../Utils/cardApi";
+import {
+  createDeck,
+  dealCards,
+  getFaceValue,
+  shuffle,
+} from "../../Utils/cardApi";
 
 export enum Suit {
   Diamonds,
@@ -75,6 +80,7 @@ export class Game {
   centerPile2: Pile = [];
   centerDrawPile1: Pile = [];
   centerDrawPile2: Pile = [];
+  discardedPile: Pile = [];
 
   constructor(gameID: number) {
     while (this.checkIsDead()) {
@@ -96,71 +102,83 @@ export class Game {
   }
 
   useCard(card: Card, player: Player): Game | undefined {
-      let index: number = player.hand.indexOf(card);
-      let targetCard: Card = player.hand[index];
-      let destination: Destination = Destination.CenterPile2;
-      let result: Validality = this.validateMove(
-        this.centerPile1[0],
-        this.centerPile2[0],
-        targetCard
-      );
-      if (result == Validality.CENTER1VALID) {
-        destination = Destination.CenterPile1;
-      } else if (result == Validality.INVALID) {
-        return;
-      }
-      let newCard: Card =
-        player.drawPile.length > 0 ? player.drawPile[0] : CARD_HOLDER;
-      let copy = [...player.hand];
+    let index: number = player.hand.indexOf(card);
+    let targetCard: Card = player.hand[index];
+    let destination: Destination = Destination.CenterPile2;
+    let result: Validality = this.validateMove(
+      this.centerPile1[0],
+      this.centerPile2[0],
+      targetCard
+    );
+    if (result == Validality.CENTER1VALID) {
+      destination = Destination.CenterPile1;
+    } else if (result == Validality.INVALID) {
+      return;
+    }
+    let newCard: Card =
+      player.drawPile.length > 0 ? player.drawPile[0] : CARD_HOLDER;
+    let copy = [...player.hand];
+    if(newCard !== CARD_HOLDER){
       copy[index] = newCard;
-      if (player.playerID == PlayerId.Player1) {
-        this.player1.hand = copy;
-        this.player1.drawPile =
-          player.drawPile.length > 0
-            ? player.drawPile.slice(1)
-            : player.drawPile;
-      } else if (player.playerID == PlayerId.Player2) {
-        this.player2.hand = copy;
-        this.player2.drawPile =
-          player.drawPile.length > 0
-            ? player.drawPile.slice(1)
-            : player.drawPile;
-      }
+    }else{
+      copy = [...player.hand.slice(0,index), ...player.hand.slice(index+1)];
+    }
+    if (player.playerID == PlayerId.Player1) {
+      this.player1.hand = copy;
+      this.player1.drawPile =
+        player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
+    } else if (player.playerID == PlayerId.Player2) {
+      this.player2.hand = copy;
+      this.player2.drawPile =
+        player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
+    }
 
-      if (destination == Destination.CenterPile1) {
-        this.centerPile1 = [targetCard, ...this.centerPile1];
-      } else {
-        this.centerPile2 = [targetCard, ...this.centerPile2];
-      }
-
-      this.shuffleUntilNotDead();
+    if (destination == Destination.CenterPile1) {
+      this.centerPile1 = [targetCard, ...this.centerPile1];
+    } else {
+      this.centerPile2 = [targetCard, ...this.centerPile2];
+    }
+    this.discardedPile.push(targetCard);
+    this.shuffleUntilNotDead();
   }
 
   shuffleUntilNotDead() {
-    let isDead: boolean = this.checkIsDead();
+    let isDead = this.checkIsDead();
+    console.log(isDead);
+
     while (isDead) {
-      isDead = this.checkIsDead();
       console.log("Cant Move");
-      let centerDrawPile1TopCard: Card = this.centerDrawPile1[0];
-      let centerDrawPile2TopCard: Card = this.centerDrawPile2[0];
-      // in case it's dead and there are no cards to refill from we will take from the center piles and redistribute the cards to the side
+
+      // If center draw piles are empty, redistribute from center piles
       if (
-        this.centerDrawPile1.length == 0 ||
-        this.centerDrawPile2.length == 0
+        this.centerDrawPile1.length === 0 ||
+        this.centerDrawPile2.length === 0
       ) {
-        this.centerDrawPile1 = [
-          ...this.centerPile1.slice(0, 4),
-          ...this.centerDrawPile1,
-        ];
-        this.centerDrawPile2 = [
-          ...this.centerPile2.slice(0, 4),
-          ...this.centerDrawPile2,
-        ];
+        let combinedCenterPile = [...this.centerPile1, ...this.centerPile2];
+
+        if (combinedCenterPile.length === 0) {
+          console.warn("No cards left to reshuffle. Game might be stuck!");
+          return; // Prevent infinite loop
+        }
+
+        shuffle(combinedCenterPile);
+        let halfIndex = Math.ceil(combinedCenterPile.length / 2);
+        this.centerDrawPile1 = combinedCenterPile.slice(0, halfIndex);
+        this.centerDrawPile2 = combinedCenterPile.slice(halfIndex);
+        this.centerPile1 = [];
+        this.centerPile2 = [];
       }
-      this.centerPile1 = [centerDrawPile1TopCard, ...this.centerPile1];
-      this.centerPile2 = [centerDrawPile2TopCard, ...this.centerPile2];
-      this.centerDrawPile1 = this.centerDrawPile1.slice(1);
-      this.centerDrawPile2 = this.centerDrawPile2.slice(1);
+
+      // Move the top card of the center draw piles to the center piles
+      if (this.centerDrawPile1.length > 0) {
+        this.centerPile1.unshift(this.centerDrawPile1.shift()!);
+      }
+      if (this.centerDrawPile2.length > 0) {
+        this.centerPile2.unshift(this.centerDrawPile2.shift()!);
+      }
+
+      // **Recalculate `isDead` after making changes**
+      isDead = this.checkIsDead();
     }
   }
 
@@ -174,50 +192,63 @@ export class Game {
     }
   }
 
-  checkIsDead() {
-    let canMove: boolean = false;
-    this.player1.hand.forEach((c: Card) => {
-      if (
-        this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !=
-        Validality.INVALID
-      )
-        canMove = true;
-    });
-    this.player2.hand.forEach((c: Card) => {
-      if (
-        this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !=
-        Validality.INVALID
-      )
-        canMove = true;
-    });
-    return !canMove;
+  checkIsDead(): boolean {
+    for (const c of this.player1.hand) {
+      if (this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !== Validality.INVALID) {
+        return false; // A valid move exists, game is NOT dead
+      }
+    }
+  
+    for (const c of this.player2.hand) {
+      if (this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !== Validality.INVALID) {
+        return false; // A valid move exists, game is NOT dead
+      }
+    }
+  
+    return true; // No valid moves, game is dead
   }
 
   validateMove(
-    centerPile1TopCard: Card,
-    centerPile2TopCard: Card,
+    centerPile1TopCard: Card | undefined,
+    centerPile2TopCard: Card | undefined,
     card: Card
   ): Validality {
-    const twoAndAceDiff = Object.keys(FaceValue).length / 2 - 1; // the difference between card "2" and "ace" is 12 defined by the FaceValue enum
-    if (Math.abs(getFaceValue(centerPile1TopCard) - getFaceValue(card)) == 1) {
-      return Validality.CENTER1VALID;
-    } else if (
-      Math.abs(getFaceValue(centerPile2TopCard) - getFaceValue(card)) == 1
-    ) {
-      return Validality.CENTER2VALID;
-    } else if (
-      Math.abs(getFaceValue(centerPile1TopCard) - getFaceValue(card)) ==
-      twoAndAceDiff
-    ) {
-      return Validality.CENTER1VALID;
-    } else if (
-      Math.abs(getFaceValue(centerPile2TopCard) - getFaceValue(card)) ==
-      twoAndAceDiff
-    ) {
-      return Validality.CENTER2VALID;
-    } else {
-      return Validality.INVALID;
+    if (centerPile1TopCard === undefined && centerPile2TopCard === undefined) {
+      return Validality.INVALID; // No cards to compare against
     }
+
+    const cardFaceValue = getFaceValue(card);
+    const center1Value =
+      centerPile1TopCard !== undefined
+        ? getFaceValue(centerPile1TopCard)
+        : null;
+    const center2Value =
+      centerPile2TopCard !== undefined
+        ? getFaceValue(centerPile2TopCard)
+        : null;
+
+    const twoAndAceDiff = Object.keys(FaceValue).length / 2 - 1; // Difference between Ace and 2
+
+    if (center1Value !== null && Math.abs(center1Value - cardFaceValue) === 1) {
+      return Validality.CENTER1VALID;
+    }
+    if (center2Value !== null && Math.abs(center2Value - cardFaceValue) === 1) {
+      return Validality.CENTER2VALID;
+    }
+    if (
+      center1Value !== null &&
+      Math.abs(center1Value - cardFaceValue) === twoAndAceDiff
+    ) {
+      return Validality.CENTER1VALID;
+    }
+    if (
+      center2Value !== null &&
+      Math.abs(center2Value - cardFaceValue) === twoAndAceDiff
+    ) {
+      return Validality.CENTER2VALID;
+    }
+
+    return Validality.INVALID;
   }
 }
 

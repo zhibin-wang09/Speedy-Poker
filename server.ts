@@ -54,7 +54,6 @@ app.prepare().then(() => {
         io.to(game.player2.socketID).emit("result", "You Won the Game!");
         io.to(game.player1.socketID).emit("result", "You Lose the Game!");
       }
-
       io.sockets.in(String(gameID)).emit("receiveGameState", game);
     });
 

@@ -48,14 +48,15 @@ export default function Page() {
         description: response,
         duration: 6000,
       });
+      setTimeout(() => {router.push("/")}, 5000)
     });
 
     socket.on("endGame", (response: string) => {
       toaster.create({
         description: response,
-        duration: 6000,
+        duration: 5000,
       })
-      router.push("/");
+      setTimeout(() => {router.push("/")}, 5000)
     });
 
     return () => {

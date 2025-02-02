@@ -57,7 +57,7 @@ export function dealCards(deck: Deck, numberOfCards: number): Pile {
   return deck.splice(0, numberOfCards);
 }
 
-function shuffle(deck: Deck): void {
+export function shuffle(deck: Deck): void {
   let currentIndex = deck.length;
 
   // While there remain elements to shuffle...
