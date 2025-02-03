@@ -98,7 +98,7 @@ export default function Page() {
           player={player1}
           isFlipped={true}
         ></Hand>
-        <Pile Cards={player1.drawPile} isFlipped={true} />
+        <Pile Cards={player1.drawPile} isFlipped={true} showNumberOfCardsInPile={true}/>
       </Box>
       <Box
         display="flex"
@@ -106,10 +106,10 @@ export default function Page() {
         justifyContent="space-between"
         margin="30px"
       >
-        <Pile Cards={centerDrawPile1} isFlipped={true} />
-        <Pile Cards={centerPile1} isFlipped={false} />
-        <Pile Cards={centerPile2} isFlipped={false} />
-        <Pile Cards={centerDrawPile2} isFlipped={true} />
+        <Pile Cards={centerDrawPile1} isFlipped={true} showNumberOfCardsInPile={false} />
+        <Pile Cards={centerPile1} isFlipped={false} showNumberOfCardsInPile={false}/>
+        <Pile Cards={centerPile2} isFlipped={false} showNumberOfCardsInPile={false}/>
+        <Pile Cards={centerDrawPile2} isFlipped={true} showNumberOfCardsInPile={false}/>
       </Box>
       <Box
         display="flex"
@@ -123,7 +123,7 @@ export default function Page() {
           player={player2}
           isFlipped={false}
         ></Hand>
-        <Pile Cards={player2.drawPile} isFlipped={true} />
+        <Pile Cards={player2.drawPile} isFlipped={true} showNumberOfCardsInPile={true}/>
       </Box>
       <Toaster />
     </Box>

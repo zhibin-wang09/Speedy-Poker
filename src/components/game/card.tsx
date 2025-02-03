@@ -1,10 +1,6 @@
+import { Box } from "@chakra-ui/react";
 import { getFaceValue, getSuit } from "../../../Utils/cardApi";
-import {
-  Card as TCard,
-  FaceValue,
-  Suit,
-  Player,
-} from "../../types/types";
+import { Card as TCard, FaceValue, Suit, Player } from "../../types/types";
 import { motion } from "framer-motion";
 
 interface CardProp {
@@ -14,24 +10,33 @@ interface CardProp {
   player?: Player;
 }
 
-export default function Card({ card, isFlipped, playCard, player }: CardProp) {
+export default function Card({
+  card,
+  isFlipped,
+  playCard,
+  player,
+}: CardProp) {
   const isFace = !isFlipped && card !== undefined;
   const src = isFace ? createCardSVGPath(card!) : CARD_BACK_SVG_PATH;
 
   return (
-    <div data-testid = {`card-${card}-div`} id={player == null ? "" : `player${player}-card${card}`}>
-        <motion.img
+    <Box
+      data-testid={`card-${card}-div`}
+      id={player == null ? "" : `player${player}-card${card}`}
+      pos="relative"
+    >
+      <motion.img
         data-testid={`card-${card}`}
-          initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
-          animate={{ opacity: 1, scale: 1 }}
-          onClick={() => {
-            if (player != null && playCard && !isFlipped) playCard(card, player);
-          }}
-          src={src}
-          layoutId={card?.toString()} // Framer motion use layoutId to animate the image transition whne Card is removed from one component to another component
-          className="size-40 inline"
-        />
-    </div>
+        initial={{ x: 0, y: 0, opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 1, scale: 1 }}
+        onClick={() => {
+          if (player != null && playCard && !isFlipped) playCard(card, player);
+        }}
+        src={src}
+        layoutId={card?.toString()} // Framer motion use layoutId to animate the image transition whne Card is removed from one component to another component
+        className="size-40 inline"
+      />
+    </Box>
   );
 }
 
