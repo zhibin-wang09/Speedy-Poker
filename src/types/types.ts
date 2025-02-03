@@ -118,10 +118,10 @@ export class Game {
     let newCard: Card =
       player.drawPile.length > 0 ? player.drawPile[0] : CARD_HOLDER;
     let copy = [...player.hand];
-    if(newCard !== CARD_HOLDER){
+    if (newCard !== CARD_HOLDER) {
       copy[index] = newCard;
-    }else{
-      copy = [...player.hand.slice(0,index), ...player.hand.slice(index+1)];
+    } else {
+      copy = [...player.hand.slice(0, index), ...player.hand.slice(index + 1)];
     }
     if (player.playerID == PlayerId.Player1) {
       this.player1.hand = copy;
@@ -193,21 +193,25 @@ export class Game {
   }
 
   checkIsDead(): boolean {
-    for (const c of this.player1.hand) {
-      if (this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !== Validality.INVALID) {
-        return false; // A valid move exists, game is NOT dead
+    const players =
+      Math.random() < 0.5
+        ? [this.player1, this.player2]
+        : [this.player2, this.player1]; // Randomize order
+
+    for (const player of players) {
+      for (const c of player.hand) {
+        if (
+          this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !==
+          Validality.INVALID
+        ) {
+          return false; // A valid move exists, game is NOT dead
+        }
       }
     }
-  
-    for (const c of this.player2.hand) {
-      if (this.validateMove(this.centerPile1[0], this.centerPile2[0], c) !== Validality.INVALID) {
-        return false; // A valid move exists, game is NOT dead
-      }
-    }
-  
+
     return true; // No valid moves, game is dead
   }
-
+  
   validateMove(
     centerPile1TopCard: Card | undefined,
     centerPile2TopCard: Card | undefined,
