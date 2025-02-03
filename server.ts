@@ -13,6 +13,8 @@ const handler = app.getRequestHandler();
 
 const games = new Map<number, Game>();
 const socketToGame = new Map<string, Game>();
+const currentRoomIDs = new Set<string>();
+
 interface joinGameInput {
   roomID: number;
   playerName: string;
@@ -48,11 +50,11 @@ app.prepare().then(() => {
       if (!game) return;
 
       if (game.player1.hand.length == 0) {
-        io.to(game.player1.socketID).emit("result", "You Won the Game!");
-        io.to(game.player2.socketID).emit("result", "You Lose the Game!");
-      }else if(game.player2.hand.length == 0){
         io.to(game.player2.socketID).emit("result", "You Won the Game!");
         io.to(game.player1.socketID).emit("result", "You Lose the Game!");
+      }else if(game.player2.hand.length == 0){
+        io.to(game.player1.socketID).emit("result", "You Won the Game!");
+        io.to(game.player2.socketID).emit("result", "You Lose the Game!");
       }
       io.sockets.in(String(gameID)).emit("receiveGameState", game);
     });
@@ -105,14 +107,12 @@ app.prepare().then(() => {
         console.log("Did not find existing game when user exited");
         return;
       }
-      console.log(game.player1, game.player2);
       socketToGame.delete(game.player1.socketID!);
       socketToGame.delete(game.player2.socketID!);
       games.delete(game.gameID);
       io.in(String(game.gameID)).socketsLeave(String(game.gameID));
       io.to(game.player1.socketID!).emit("endGame", "An user have left");
       io.to(game.player2.socketID!).emit("endGame", "An user have left");
-      console.log(game.player1.socketID, game.player2.socketID);
     });
   });
 

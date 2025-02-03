@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { socket } from "@/socket";
 import { useEffect } from "react";
@@ -12,14 +12,18 @@ export default function WaitingPage() {
 
   useEffect(() => {
     socket.emit("onPlayerReady", Number(params.roomID));
-    socket.on("startGameSession", () => {
+
+    const handleStartGame = () => {
       router.push(`/game/${params.roomID}`);
-    });
+    };
+
+    socket.on("startGameSession", handleStartGame);
 
     return () => {
-      socket.off("startGameSession");
+      socket.off("startGameSession", handleStartGame); // Proper cleanup
     };
   }, [router, params]);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.5 }}
@@ -29,11 +33,12 @@ export default function WaitingPage() {
       <Center height="100vh">
         <Box>
           <Stack direction="column" justifyContent="center">
-            <Text as="b">
-              Waiting For Another Player
-            </Text>
+            <Text as="b">Waiting For Another Player</Text>
             <Center>
-                <Spinner zIndex={1}></Spinner>
+              <Spinner
+                size="lg" // Adjust size of the spinner
+                color="white" // Set the color to white
+              />
             </Center>
             <Box boxShadow="xs" rounded="md" textAlign="center">
               {`Game Code: ${params.roomID}`}

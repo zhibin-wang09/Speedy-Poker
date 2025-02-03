@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { socket } from "../socket";
 import { motion } from "framer-motion";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Box, Center, Input, Stack, Text } from "@chakra-ui/react";
+import { Box, Center, Input, Spinner, Stack, Text } from "@chakra-ui/react";
 import { Field} from "@/components/ui/field";
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation";
@@ -59,8 +59,8 @@ export default function Home() {
                 >
                   <Input
                     {...register("roomID", {
-                      required: "Game code is required",
                       valueAsNumber: true,
+                      validate: (value) => (value > 0),
                     })}
                     placeholder="Ex. 1021"
                   />
