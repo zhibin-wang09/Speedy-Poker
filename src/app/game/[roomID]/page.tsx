@@ -71,7 +71,6 @@ export default function Page() {
   }, [param]);
 
   function playCard(card: Card, player: Player) {
-    console.log("play");
     socket.emit("playCard", card, parseInt(roomID!), player);
   }
 
@@ -95,7 +94,7 @@ export default function Page() {
           player={player1}
           isFlipped={true}
         ></Hand>
-        <Pile Cards={player1.drawPile} isFlipped={true} showNumberOfCardsInPile={true}/>
+        <Pile Cards={player1.drawPile} isFlipped={true} showNumberOfCardsInPile={true} disposition={"-100%"}/>
       </Box>
       <Box>
         <Text>Score: {player1.point}</Text>
@@ -105,10 +104,10 @@ export default function Page() {
         alignItems="center"
         justifyContent="space-between"
       >
-        <Pile Cards={centerDrawPile1} isFlipped={true} showNumberOfCardsInPile={false} />
-        <Pile Cards={centerPile1} isFlipped={false} showNumberOfCardsInPile={false}/>
-        <Pile Cards={centerPile2} isFlipped={false} showNumberOfCardsInPile={false}/>
-        <Pile Cards={centerDrawPile2} isFlipped={true} showNumberOfCardsInPile={false}/>
+        <Pile Cards={centerDrawPile1} isFlipped={true} showNumberOfCardsInPile={false} disposition={"0%"}/>
+        <Pile Cards={centerPile1} isFlipped={false} showNumberOfCardsInPile={false} disposition={"0%"}/>
+        <Pile Cards={centerPile2} isFlipped={false} showNumberOfCardsInPile={false} disposition={"0%"}/>
+        <Pile Cards={centerDrawPile2} isFlipped={true} showNumberOfCardsInPile={false} disposition={"0%"}/>
       </Box>
       <Box>
         <Text>Score: {player2.point}</Text>
@@ -116,7 +115,6 @@ export default function Page() {
       <Box
         display="flex"
         alignItems="center"
-        justifyContent="space-between"
       >
         <Hand
           cards={player2.hand}
@@ -124,7 +122,7 @@ export default function Page() {
           player={player2}
           isFlipped={false}
         ></Hand>
-        <Pile Cards={player2.drawPile} isFlipped={true} showNumberOfCardsInPile={true}/>
+        <Pile Cards={player2.drawPile} isFlipped={true} showNumberOfCardsInPile={true} disposition={"-100%"}/>
       </Box>
       <Toaster />
     </Box>
