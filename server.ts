@@ -20,7 +20,6 @@ interface joinGameInput {
   playerName: string;
 }
 
-
 app.prepare().then(() => {
   const httpServer = createServer(handler);
 
@@ -45,30 +44,48 @@ app.prepare().then(() => {
         console.log("ERROR!!!");
         return;
       }
-      
+
       game.useCard(card, player);
-      if (!game){
+      if (!game) {
         io.sockets.in(String(gameID)).emit("receiveGameState", game);
         return;
       }
 
       if (game.player1.hand.length == 0) {
-        if(game.player2.point > game.player1.point){
+        if (game.player2.point > game.player1.point) {
           io.to(game.player2.socketID).emit("result", "You Won the Game!");
-        }else if(game.player1.point > game.player2.point){
+          socketToGame.delete(game.player1.socketID!);
+          socketToGame.delete(game.player2.socketID!);
+          games.delete(game.gameID);
+        } else if (game.player1.point > game.player2.point) {
           io.to(game.player1.socketID).emit("result", "You Lose the Game!");
-        }else{
+          socketToGame.delete(game.player1.socketID!);
+          socketToGame.delete(game.player2.socketID!);
+          games.delete(game.gameID);
+        } else {
           io.to(game.player1.socketID).emit("result", "Tie game");
           io.to(game.player2.socketID).emit("result", "Tie game");
+          socketToGame.delete(game.player1.socketID!);
+          socketToGame.delete(game.player2.socketID!);
+          games.delete(game.gameID);
         }
-      }else if(game.player2.hand.length == 0){
-        if(game.player2.point > game.player1.point){
+      } else if (game.player2.hand.length == 0) {
+        if (game.player2.point > game.player1.point) {
           io.to(game.player1.socketID).emit("result", "You Won the Game!");
-        }else if(game.player1.point > game.player2.point){
+          socketToGame.delete(game.player1.socketID!);
+          socketToGame.delete(game.player2.socketID!);
+          games.delete(game.gameID);
+        } else if (game.player1.point > game.player2.point) {
           io.to(game.player2.socketID).emit("result", "You Lose the Game!");
-        }else{
+          socketToGame.delete(game.player1.socketID!);
+          socketToGame.delete(game.player2.socketID!);
+          games.delete(game.gameID);
+        } else {
           io.to(game.player1.socketID).emit("result", "Tie game");
           io.to(game.player2.socketID).emit("result", "Tie game");
+          socketToGame.delete(game.player1.socketID!);
+          socketToGame.delete(game.player2.socketID!);
+          games.delete(game.gameID);
         }
       }
       io.sockets.in(String(gameID)).emit("receiveGameState", game);
@@ -76,7 +93,9 @@ app.prepare().then(() => {
 
     socket.on("joinGameRoom", (data: joinGameInput) => {
       const newRoomID: number = Math.floor(Date.now() * Math.random());
-      const roomIDString: string = data.roomID ? String(data.roomID) : String(newRoomID);
+      const roomIDString: string = data.roomID
+        ? String(data.roomID)
+        : String(newRoomID);
 
       // make sure players are restricted at 2
       if (io.sockets.adapter.rooms.get(roomIDString)?.size === 2) {
@@ -96,7 +115,7 @@ app.prepare().then(() => {
 
       // Set up the player socketID properly
       game.playerJoin(data.playerName, socket.id);
-      
+
       console.log(`Player1 ID: ${game.player1.socketID}`);
       console.log(`Player2 ID: ${game.player2.socketID}`);
 
@@ -105,7 +124,6 @@ app.prepare().then(() => {
     });
 
     socket.on("onPlayerReady", (gameID: number) => {
-      
       // Wait for 2 players to start the game
       const room = io.sockets.adapter.rooms.get(String(gameID));
       if (room?.size === 2) {
