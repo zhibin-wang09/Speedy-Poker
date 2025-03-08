@@ -58,6 +58,7 @@ export class Player {
   playerID: PlayerId = PlayerId.Default;
   socketID: string;
   name: string;
+  point: number;
 
   constructor(hand: Cards, drawPile: Pile, playerID: PlayerId) {
     this.hand = hand;
@@ -65,6 +66,7 @@ export class Player {
     this.playerID = playerID;
     this.name = "";
     this.socketID = "";
+    this.point = 0;
   }
 
   setName(name: string) {
@@ -110,11 +112,26 @@ export class Game {
       this.centerPile2[0],
       targetCard
     );
+    let gamePlayer: Player = new Player([],[],PlayerId.Default);
+    // find the game player
+    if(player.playerID === PlayerId.Player1){
+      gamePlayer = this.player1;
+    }else if(player.playerID === PlayerId.Player2){
+      gamePlayer = this.player2;
+    }
+
+    if(gamePlayer.playerID === PlayerId.Default){
+      return;
+    }
+
+    // find if the card can be used in this environment
     if (result == Validality.CENTER1VALID) {
       destination = Destination.CenterPile1;
     } else if (result == Validality.INVALID) {
+      gamePlayer.point -= 1;
       return;
     }
+
     let newCard: Card =
       player.drawPile.length > 0 ? player.drawPile[0] : CARD_HOLDER;
     let copy = [...player.hand];
@@ -123,31 +140,28 @@ export class Game {
     } else {
       copy = [...player.hand.slice(0, index), ...player.hand.slice(index + 1)];
     }
-    if (player.playerID == PlayerId.Player1) {
-      this.player1.hand = copy;
-      this.player1.drawPile =
-        player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
-    } else if (player.playerID == PlayerId.Player2) {
-      this.player2.hand = copy;
-      this.player2.drawPile =
-        player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
+
+    gamePlayer.hand = copy;
+    gamePlayer.drawPile = player.drawPile.length > 0 ? player.drawPile.slice(1) : player.drawPile;
+    if(gamePlayer.hand.length == 0){
+      gamePlayer.point += 5;
     }
 
+    // place the card in the desination pile
     if (destination == Destination.CenterPile1) {
       this.centerPile1 = [targetCard, ...this.centerPile1];
     } else {
       this.centerPile2 = [targetCard, ...this.centerPile2];
     }
+    gamePlayer.point += 1;
     this.discardedPile.push(targetCard);
     this.shuffleUntilNotDead();
   }
 
   shuffleUntilNotDead() {
     let isDead = this.checkIsDead();
-    console.log(isDead);
 
     while (isDead) {
-      console.log("Cant Move");
 
       // If center draw piles are empty, redistribute from center piles
       if (

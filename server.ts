@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import next from "next";
 import { Server } from "socket.io";
-import { Card, Game, Player } from "@/types/types";
+import { Card, Game, Player, PlayerId } from "@/types/types";
 
 const dev = process.env.NODE_ENV !== "production";
 console.log(process.env.NODE_ENV);
@@ -47,14 +47,29 @@ app.prepare().then(() => {
       }
       
       game.useCard(card, player);
-      if (!game) return;
+      if (!game){
+        io.sockets.in(String(gameID)).emit("receiveGameState", game);
+        return;
+      }
 
       if (game.player1.hand.length == 0) {
-        io.to(game.player2.socketID).emit("result", "You Won the Game!");
-        io.to(game.player1.socketID).emit("result", "You Lose the Game!");
+        if(game.player2.point > game.player1.point){
+          io.to(game.player2.socketID).emit("result", "You Won the Game!");
+        }else if(game.player1.point > game.player2.point){
+          io.to(game.player1.socketID).emit("result", "You Lose the Game!");
+        }else{
+          io.to(game.player1.socketID).emit("result", "Tie game");
+          io.to(game.player2.socketID).emit("result", "Tie game");
+        }
       }else if(game.player2.hand.length == 0){
-        io.to(game.player1.socketID).emit("result", "You Won the Game!");
-        io.to(game.player2.socketID).emit("result", "You Lose the Game!");
+        if(game.player2.point > game.player1.point){
+          io.to(game.player1.socketID).emit("result", "You Won the Game!");
+        }else if(game.player1.point > game.player2.point){
+          io.to(game.player2.socketID).emit("result", "You Lose the Game!");
+        }else{
+          io.to(game.player1.socketID).emit("result", "Tie game");
+          io.to(game.player2.socketID).emit("result", "Tie game");
+        }
       }
       io.sockets.in(String(gameID)).emit("receiveGameState", game);
     });

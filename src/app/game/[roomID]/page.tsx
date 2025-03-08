@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Hand from "@/components/game/hand";
 import Pile from "@/components/game/pile";
 import { Pile as TPile, Card, Player, PlayerId, Game } from "@/types/types";
-import { Box } from "@chakra-ui/react";
+import { Box, Text} from "@chakra-ui/react";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { socket } from "@/socket";
 import { useParams, useRouter } from "next/navigation";
@@ -97,6 +97,9 @@ export default function Page() {
         ></Hand>
         <Pile Cards={player1.drawPile} isFlipped={true} showNumberOfCardsInPile={true}/>
       </Box>
+      <Box>
+        <Text>Score: {player1.point}</Text>
+      </Box>
       <Box
         display="flex"
         alignItems="center"
@@ -106,6 +109,9 @@ export default function Page() {
         <Pile Cards={centerPile1} isFlipped={false} showNumberOfCardsInPile={false}/>
         <Pile Cards={centerPile2} isFlipped={false} showNumberOfCardsInPile={false}/>
         <Pile Cards={centerDrawPile2} isFlipped={true} showNumberOfCardsInPile={false}/>
+      </Box>
+      <Box>
+        <Text>Score: {player2.point}</Text>
       </Box>
       <Box
         display="flex"
