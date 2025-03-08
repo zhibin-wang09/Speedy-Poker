@@ -15,7 +15,7 @@ export default function Pile({
 }: PileProp) {
   return (
     <>
-      <HStack position="relative">
+      <HStack position="relative" margin={{base: "3%"}}>
         {Cards === undefined ? (
           ""
         ) : (
@@ -23,7 +23,9 @@ export default function Pile({
             <Card key={Cards[0]} card={Cards[0]} isFlipped={isFlipped} />
             {showNumberOfCardsInPile ? (
               <Float>
-                <Circle size={5} bg={"black"} color="white">{Cards.length}</Circle>
+                <Circle size={5} bg={"black"} color="white">
+                  {Cards.length}
+                </Circle>
               </Float>
             ) : (
               <></>

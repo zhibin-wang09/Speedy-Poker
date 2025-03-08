@@ -15,7 +15,7 @@ export default function Hand({ cards, playCard, player, isFlipped }: HandProp) {
       display="flex"
       alignItems="center"
       justifyContent="space-between"
-      margin="30px"
+      margin={{base: "1%"}}
     >
       {cards.map((c) => {
         if (c !== -1)

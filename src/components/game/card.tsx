@@ -23,7 +23,7 @@ export default function Card({
     <Box
       data-testid={`card-${card}-div`}
       id={player == null ? "" : `player${player}-card${card}`}
-      pos="relative"
+      margin={{base: "1%"}}
     >
       <motion.img
         data-testid={`card-${card}`}

@@ -81,16 +81,13 @@ export default function Page() {
       alignItems="center"
       justifyContent="space-between"
       flexDirection="column"
-      backgroundColor="#35654D"
-      position="fixed"
-      height="100%"
-      width="100%"
+      backgroundColor="black"
+      height="100svh"
     >
       <Box
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        margin="30px"
       >
         <Hand
           cards={player1.hand}
@@ -104,7 +101,6 @@ export default function Page() {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        margin="30px"
       >
         <Pile Cards={centerDrawPile1} isFlipped={true} showNumberOfCardsInPile={false} />
         <Pile Cards={centerPile1} isFlipped={false} showNumberOfCardsInPile={false}/>
@@ -115,7 +111,6 @@ export default function Page() {
         display="flex"
         alignItems="center"
         justifyContent="space-between"
-        margin="30px"
       >
         <Hand
           cards={player2.hand}
