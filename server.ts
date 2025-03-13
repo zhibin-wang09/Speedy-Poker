@@ -54,11 +54,13 @@ app.prepare().then(() => {
       if (game.player1.hand.length == 0) {
         if (game.player2.point > game.player1.point) {
           io.to(game.player2.socketID).emit("result", "You Won the Game!");
+          io.to(game.player1.socketID).emit("result", "You Lose the Game!");
           socketToGame.delete(game.player1.socketID!);
           socketToGame.delete(game.player2.socketID!);
           games.delete(game.gameID);
         } else if (game.player1.point > game.player2.point) {
-          io.to(game.player1.socketID).emit("result", "You Lose the Game!");
+          io.to(game.player1.socketID).emit("result", "You Won the Game!");
+          io.to(game.player2.socketID).emit("result", "You Lose the Game!");
           socketToGame.delete(game.player1.socketID!);
           socketToGame.delete(game.player2.socketID!);
           games.delete(game.gameID);
@@ -71,12 +73,14 @@ app.prepare().then(() => {
         }
       } else if (game.player2.hand.length == 0) {
         if (game.player2.point > game.player1.point) {
-          io.to(game.player1.socketID).emit("result", "You Won the Game!");
+          io.to(game.player2.socketID).emit("result", "You Won the Game!");
+          io.to(game.player1.socketID).emit("result", "You Lose the Game!");
           socketToGame.delete(game.player1.socketID!);
           socketToGame.delete(game.player2.socketID!);
           games.delete(game.gameID);
         } else if (game.player1.point > game.player2.point) {
           io.to(game.player2.socketID).emit("result", "You Lose the Game!");
+          io.to(game.player1.socketID).emit("result", "You Won the Game!");
           socketToGame.delete(game.player1.socketID!);
           socketToGame.delete(game.player2.socketID!);
           games.delete(game.gameID);

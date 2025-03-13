@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Hand from "@/components/game/hand";
 import Pile from "@/components/game/pile";
 import { Pile as TPile, Card, Player, PlayerId, Game } from "@/types/types";
-import { Box, Text} from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { socket } from "@/socket";
 import { useParams, useRouter } from "next/navigation";
@@ -48,15 +48,19 @@ export default function Page() {
         description: response,
         duration: 6000,
       });
-      setTimeout(() => {router.push("/")}, 5000)
+      setTimeout(() => {
+        router.push("/");
+      }, 5000);
     });
 
     socket.on("endGame", (response: string) => {
       toaster.create({
         description: response,
         duration: 5000,
-      })
-      setTimeout(() => {router.push("/")}, 5000)
+      });
+      setTimeout(() => {
+        router.push("/");
+      }, 5000);
     });
 
     return () => {
@@ -83,46 +87,67 @@ export default function Page() {
       backgroundColor="black"
       height="100svh"
     >
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Box display="flex" alignItems="center" justifyContent="space-between">
         <Hand
           cards={player1.hand}
           playCard={playCard}
           player={player1}
           isFlipped={true}
+          disposition={"0%"}
         ></Hand>
-        <Pile Cards={player1.drawPile} isFlipped={true} showNumberOfCardsInPile={true} disposition={"-100%"}/>
+        <Pile
+          Cards={player1.drawPile}
+          isFlipped={true}
+          showNumberOfCardsInPile={true}
+          disposition={"-70%"}
+        />
       </Box>
       <Box>
         <Text>Score: {player1.point}</Text>
       </Box>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Pile Cards={centerDrawPile1} isFlipped={true} showNumberOfCardsInPile={false} disposition={"0%"}/>
-        <Pile Cards={centerPile1} isFlipped={false} showNumberOfCardsInPile={false} disposition={"0%"}/>
-        <Pile Cards={centerPile2} isFlipped={false} showNumberOfCardsInPile={false} disposition={"0%"}/>
-        <Pile Cards={centerDrawPile2} isFlipped={true} showNumberOfCardsInPile={false} disposition={"0%"}/>
+      <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Pile
+          Cards={centerDrawPile1}
+          isFlipped={true}
+          showNumberOfCardsInPile={false}
+          disposition={"0%"}
+        />
+        <Pile
+          Cards={centerPile1}
+          isFlipped={false}
+          showNumberOfCardsInPile={false}
+          disposition={"0%"}
+        />
+        <Pile
+          Cards={centerPile2}
+          isFlipped={false}
+          showNumberOfCardsInPile={false}
+          disposition={"0%"}
+        />
+        <Pile
+          Cards={centerDrawPile2}
+          isFlipped={true}
+          showNumberOfCardsInPile={false}
+          disposition={"0%"}
+        />
       </Box>
       <Box>
         <Text>Score: {player2.point}</Text>
       </Box>
-      <Box
-        display="flex"
-        alignItems="center"
-      >
+      <Box display="flex" alignItems="center">
         <Hand
           cards={player2.hand}
           playCard={playCard}
           player={player2}
           isFlipped={false}
+          disposition={"0%"}
         ></Hand>
-        <Pile Cards={player2.drawPile} isFlipped={true} showNumberOfCardsInPile={true} disposition={"-100%"}/>
+        <Pile
+          Cards={player2.drawPile}
+          isFlipped={true}
+          showNumberOfCardsInPile={true}
+          disposition={"-70%"}
+        />
       </Box>
       <Toaster />
     </Box>
