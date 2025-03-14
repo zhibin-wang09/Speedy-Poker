@@ -48,7 +48,7 @@ export default function Home() {
         <Box>
           <Stack direction={["column"]}>
             <Text fontSize="4xl" as="b">
-              Up and Down Poker
+              Fuga
             </Text>
             <form onSubmit={handleSubmit(createGame)}>
               <Stack direction={["column"]}>
