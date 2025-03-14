@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Up and Down Poker",
+  title: "Fuga",
   description: "Fast Paced Poker Game Play With Friends",
 };
 
