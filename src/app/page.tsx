@@ -4,11 +4,22 @@ import { useEffect } from "react";
 import { socket } from "../socket";
 import { motion } from "framer-motion";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Box, Center, Input, Spinner, Stack, Text } from "@chakra-ui/react";
-import { Field} from "@/components/ui/field";
-import { Button } from "@/components/ui/button"
+import {
+  Box,
+  Center,
+  HoverCard,
+  HStack,
+  Input,
+  Portal,
+  Spinner,
+  Stack,
+  Strong,
+  Text,
+} from "@chakra-ui/react";
+import { Field } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-
+import { FaInfoCircle } from "react-icons/fa";
 
 interface joinGameInput {
   roomID: number;
@@ -47,9 +58,30 @@ export default function Home() {
       <Center height="100vh">
         <Box>
           <Stack direction={["column"]}>
-            <Text fontSize="4xl" as="b">
-              Fuga
-            </Text>
+            <HStack>
+              <Text fontSize="4xl" as="b">
+                Fuga
+              </Text>
+              <HoverCard.Root positioning={{placement: "top"}}>
+                <HoverCard.Trigger asChild>
+                  <FaInfoCircle />
+                </HoverCard.Trigger>
+                <Portal>
+                  <HoverCard.Positioner>
+                    <HoverCard.Content maxWidth="240px">
+                      <HoverCard.Arrow />
+                      <Box>
+                        <Strong>Fuga</Strong> is card game where we compete to finish our cards on hand. But you <Strong>WILL</Strong> be punished if you spam the cards(you're using the wrong card)
+                      </Box>
+                      <Box> </Box>
+                      <Box>
+                        You can play cards that's one position away from the middle card(you can play card 2 or 4 if the target card is 3)
+                      </Box>
+                    </HoverCard.Content>
+                  </HoverCard.Positioner>
+                </Portal>
+              </HoverCard.Root>
+            </HStack>
             <form onSubmit={handleSubmit(createGame)}>
               <Stack direction={["column"]}>
                 <Field
@@ -60,12 +92,16 @@ export default function Home() {
                   <Input
                     {...register("roomID", {
                       valueAsNumber: true,
-                      validate: (value) => (value > 0),
+                      validate: (value) => value > 0,
                     })}
                     placeholder="Ex. 1021"
                   />
                 </Field>
-                <Field label="Name" invalid={!!errors.playerName} errorText={errors.playerName?.message}>
+                <Field
+                  label="Name"
+                  invalid={!!errors.playerName}
+                  errorText={errors.playerName?.message}
+                >
                   <Input
                     {...register("playerName", {
                       required: "Name is required",
@@ -74,7 +110,9 @@ export default function Home() {
                     size="md"
                   ></Input>
                 </Field>
-                <Button type="submit" variant="solid">Start</Button>
+                <Button type="submit" variant="solid">
+                  Start
+                </Button>
               </Stack>
             </form>
           </Stack>
