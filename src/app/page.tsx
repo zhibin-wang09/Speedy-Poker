@@ -60,7 +60,7 @@ export default function Home() {
           <Stack direction={["column"]}>
             <HStack>
               <Text fontSize="4xl" as="b">
-                Fuga
+                Tarari
               </Text>
               <HoverCard.Root positioning={{placement: "top"}}>
                 <HoverCard.Trigger asChild>
@@ -71,7 +71,7 @@ export default function Home() {
                     <HoverCard.Content maxWidth="240px">
                       <HoverCard.Arrow />
                       <Box>
-                        <Strong>Fuga</Strong> is card game where we compete to finish our cards on hand. But you <Strong>WILL</Strong> be punished if you spam the cards(you're using the wrong card)
+                        <Strong>Tatari</Strong> is card game where we compete to finish our cards on hand. But you <Strong>WILL</Strong> be punished if you spam the cards(you're using the wrong card)
                       </Box>
                       <Box> </Box>
                       <Box>

@@ -7,6 +7,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { Toaster, toaster } from "@/components/ui/toaster";
 import { socket } from "@/socket";
 import { useParams, useRouter } from "next/navigation";
+import Confetti from "react-confetti";
 
 export default function Page() {
   const [centerPile1, setcenterPile1] = useState<TPile>([]);
@@ -21,6 +22,7 @@ export default function Page() {
   );
   const [roomID, setRoomID] = useState<string | undefined>();
   const param = useParams<{ roomID: string }>();
+  const [haveWinner, setHaveWinner] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -48,6 +50,11 @@ export default function Page() {
         description: response,
         duration: 6000,
       });
+      if(response.toLowerCase().includes("won")){
+        setHaveWinner(true)
+      }else{
+        setHaveWinner(false)
+      }
       setTimeout(() => {
         router.push("/");
       }, 5000);
@@ -150,6 +157,7 @@ export default function Page() {
         />
       </Box>
       <Toaster />
+      {haveWinner ? <Confetti/> : <></>}
     </Box>
   );
 }
