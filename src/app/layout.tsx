@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fuga",
+  title: "Tatari",
   description: "Fast Paced Poker Game Play With Friends",
 };
 
