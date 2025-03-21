@@ -60,7 +60,7 @@ export default function Home() {
           <Stack direction={["column"]}>
             <HStack>
               <Text fontSize="4xl" as="b">
-                Tarari
+                Tatari
               </Text>
               <HoverCard.Root positioning={{placement: "top"}}>
                 <HoverCard.Trigger asChild>
